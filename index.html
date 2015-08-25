@@ -1,93 +1,96 @@
 <!doctype html>
 <html lang="en">
 
-	<head>
-		<meta charset="utf-8">
+  <head>
+    <meta charset="utf-8">
 
-		<title>A Fasterize presentation</title>
+    <title>A Fasterize presentation</title>
 
-		<meta name="description" content="A Fasterize presentation">
-		<meta name="author" content="Fasterize">
+    <meta name="description" content="A Fasterize presentation">
+    <meta name="author" content="Fasterize">
 
-		<meta name="apple-mobile-web-app-capable" content="yes" />
-		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 
-		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
 
-		<link rel="stylesheet" href="css/reveal.css">
-		<link rel="stylesheet" href="css/theme/fasterize.css" id="theme">
+    <link rel="stylesheet" href="css/reveal.css">
+    <link rel="stylesheet" href="css/theme/fasterize.css" id="theme">
 
-		<!-- Code syntax highlighting -->
-		<link rel="stylesheet" href="lib/css/zenburn.css">
+    <!-- Code syntax highlighting -->
+    <link rel="stylesheet" href="lib/css/zenburn.css">
 
-		<!-- Printing and PDF exports -->
-		<script>
-			var link = document.createElement( 'link' );
-			link.rel = 'stylesheet';
-			link.type = 'text/css';
-			link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
-			document.getElementsByTagName( 'head' )[0].appendChild( link );
-		</script>
+    <!-- Printing and PDF exports -->
+    <script>
+      var link = document.createElement( 'link' );
+      link.rel = 'stylesheet';
+      link.type = 'text/css';
+      link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+      document.getElementsByTagName( 'head' )[0].appendChild( link );
+    </script>
 
-		<!--[if lt IE 9]>
-		<script src="lib/js/html5shiv.js"></script>
-		<![endif]-->
-	</head>
+    <!--[if lt IE 9]>
+    <script src="lib/js/html5shiv.js"></script>
+    <![endif]-->
+  </head>
 
-	<body>
+  <body>
 
-		<div class="reveal">
+    <div class="reveal">
 
-			<!-- Any section element inside of this container is displayed as a slide -->
-			<div class="slides">
-				<section>
-					<h1>A Fasterize presentation</h1>
-					<h3>Fasterize template</h3>
-					<p>
-						<small>Created by Fasterize</small>
-					</p>
-				</section>
+      <!-- Any section element inside of this container is displayed as a slide -->
+      <div class="slides">
+        <section data-background="#164B6F">
+          <h1>A Fasterize presentation</h1>
+          <h3>Fasterize template</h3>
+          <p>
+            <small>Created by Fasterize</small>
+            1
+          </p>
+        </section>
+        <section class="slides-left">
+          <span class="cat-title">Cat title</span>
+          <h2>A Fasterize presentation</h2>
+          <div class="border"/>
+          <div class="content">content</div>
+        </section>
+      </div>
+    </div>
 
-			</div>
+    <div class="icon-bar">
+      <img src="assets/logo_fasterize_white.svg"/>
+    </div>
 
-			<div class="icon-bar">
-				<p>
-					<a class="image" href="http://www.fasterize.com" style="font-size:28px; font-family: AvenirNext-Medium,Arial,sans-serif; color: #FFF;"><img src="assets/fasterize_logo_mini_blanc.svg" class="plain"/><span class="logo_title">fasterize</span></a>
-					<a class="image" href="https://twitter.com/fasterize"><img class="plain" src="assets/tweet-me.svg" height="35"><span>twitter</span></a>
-          <a class="image" href="mailto:info@fasterize.com"><img class="plain" src="assets/email-me.svg" height="35"><span>email</span></a>
-          <a class="image" href="http://blog.fasterize.com/"><img class="plain" src="assets/blog-me.svg" height="35"><span>blog</span></a>
-        </p>
-			</div>
+    <script src="lib/js/head.min.js"></script>
+    <script src="js/reveal.js"></script>
 
-		</div>
+    <script>
 
-		<script src="lib/js/head.min.js"></script>
-		<script src="js/reveal.js"></script>
+      // Full list of configuration options available at:
+      // https://github.com/hakimel/reveal.js#configuration
+      Reveal.initialize({
+        controls: false,
+        progress: true,
+        history: true,
+        center: false,
+        slideNumber:true,
 
-		<script>
+        transition: 'none', // none/fade/slide/convex/concave/zoom
+        margin: 0.1,
+        minScale: 0.8,
+        maxScale: 1.3,
 
-			// Full list of configuration options available at:
-			// https://github.com/hakimel/reveal.js#configuration
-			Reveal.initialize({
-				controls: true,
-				progress: true,
-				history: true,
-				center: true,
+        // Optional reveal.js plugins
+        dependencies: [
+          { src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+          { src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+          { src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+          { src: 'plugin/highlight/highlight.js', async: true, condition: function() { return !!document.querySelector( 'pre code' ); }, callback: function() { hljs.initHighlightingOnLoad(); } },
+          { src: 'plugin/zoom-js/zoom.js', async: true },
+          { src: 'plugin/notes/notes.js', async: true }
+        ]
+      });
+    </script>
 
-				transition: 'slide', // none/fade/slide/convex/concave/zoom
-
-				// Optional reveal.js plugins
-				dependencies: [
-					{ src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
-					{ src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
-					{ src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
-					{ src: 'plugin/highlight/highlight.js', async: true, condition: function() { return !!document.querySelector( 'pre code' ); }, callback: function() { hljs.initHighlightingOnLoad(); } },
-					{ src: 'plugin/zoom-js/zoom.js', async: true },
-					{ src: 'plugin/notes/notes.js', async: true }
-				]
-			});
-
-		</script>
-
-	</body>
+  </body>
 </html>
