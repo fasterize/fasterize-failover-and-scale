@@ -4,7 +4,7 @@
   <head>
     <meta charset="utf-8">
 
-    <title>A Fasterize presentation</title>
+    <title>Comment Fasterize optimize plusieurs millions de pages HTML par jour ?</title>
 
     <meta name="description" content="A Fasterize presentation">
     <meta name="author" content="Fasterize">
@@ -41,18 +41,217 @@
       <!-- Any section element inside of this container is displayed as a slide -->
       <div class="slides">
         <section data-background="#164B6F">
-          <h1>A Fasterize presentation</h1>
-          <h3>Fasterize template</h3>
-          <p>
-            <small>Created by Fasterize</small>
-            1
-          </p>
+          <div style="display: table; height: 800px; overflow: hidden;">
+            <div style="display: table-cell; vertical-align: middle;">
+              <h1 style="font-size:1.5em">Résilience et scalabilité : qu'avons nous appris en 5 ans d'une plateforme qui optimise des millions de pages par jour ?</h1>
+              <h3></h3>
+            </div>
+          </div>
         </section>
+
         <section class="slides-left">
-          <span class="cat-title">Cat title</span>
-          <h2>A Fasterize presentation</h2>
-          <div class="border"/>
-          <div class="content">content</div>
+          <span class="cat-title">Qu'est ce que Fasterize ?</span>
+          <h2>Qu'est ce que Fasterize ?</h2>
+          <div class="border"></div>
+          <div class="content">
+            Moteur d'optimisation front en SaaS
+          </div>
+        </section>
+
+        <section>
+          <section class="slides-left">
+            <span class="cat-title">Architecture globale de Fasterize</span>
+            <h2>Architecture globale de Fasterize</h2>
+            <div class="border"></div>
+            <div class="content">
+              Schéma utilisateur / CDN / Fasterize / origine
+            </div>
+          </section>
+
+          <section class="slides-left">
+            <span class="cat-title">Architecture globale de Fasterize</span>
+            <h2>Failover global de la plateforme</h2>
+            <div class="border"></div>
+            <div class="content">
+              <ul>
+                <li>Schéma failover Cedexis / Route53</li>
+                <li>Monitoring /ping-fstrz-engine</li>
+              </ul>
+            </div>
+          </section>
+
+          <section class="slides-left">
+            <span class="cat-title">Architecture globale de Fasterize</span>
+            <h2>Scalabilité globale de la plateforme</h2>
+            <div class="border"></div>
+            <div class="content">
+              <ul>
+                <li>CDN absorbe la charge des ressources cachables (principalement les ressources statiques)</li>
+                <li>Cache CDN = durable (time in cache = TTL), Cache Fasterize = cache master mais éphémère (time in cache <= TTL)</li>
+              </ul>
+            </div>
+          </section>
+        </section>
+
+        <section>
+          <section class="slides-left">
+            <h2>Architecture d'une instance de Fasterize</h2>
+            <div class="border"></div>
+            <div class="content">
+              Schéma du moteur : SSL/Front + Cache + Proxy + Worker + API + DB
+            </div>
+          </section>
+
+          <section class="slides-left">
+            <span class="cat-title">Architecture d'une instance de Fasterize</span>
+            <h2>SSL / Front</h2>
+            <div class="border"></div>
+            <div class="content">
+              <ul>
+                <li>Fallback SSL</li>
+                <li>3 serveurs fronts (Round robin DNS) supportent largement la charge. Plus là pour assurer la dispo que pour supporter la charge</li>
+                <li>Chaque serveur est monitoré par Cedexis / Route53</li>
+              </ul>
+            </div>
+          </section>
+
+          <section class="slides-left">
+            <span class="cat-title">Architecture d'une instance de Fasterize</span>
+            <h2>Cache</h2>
+            <div class="border"></div>
+            <div class="content">
+              <ul>
+                <li>Retry proxy (TODO)</li>
+                <li>Consistent hashing au niveau Front pour pouvoir ajouter des serveurs de cache et minimiser l'impact de l'ajout/suppression d'un serveur</li>
+                <li>Chaque serveur est monitoré par la couche Front</li>
+              </ul>
+            </div>
+          </section>
+
+          <section class="slides-left">
+            <span class="cat-title">Architecture d'une instance de Fasterize</span>
+            <h2>Proxy</h2>
+            <div class="border"></div>
+            <div class="content">
+              <ul>
+                <li>optimisation sync timeout + circuit breaker</li>
+                <li>Cache sert de load balancer aux Proxys</li>
+                <li>S'appuit sur des caches DNS locaux</li>
+                <li>fallback résolution DNS de l'origine</li>
+                <li>Chaque serveur est monitoré par la couche de Cache</li>
+              </ul>
+            </div>
+          </section>
+
+          <section class="slides-left">
+            <span class="cat-title">Architecture d'une instance de Fasterize</span>
+            <h2>Worker</h2>
+            <div class="border"></div>
+            <div class="content">
+              <ul>
+                <li>Serveur Worker de type synchrone (seulement des process synchrone), asynchrone ou hybride (les process savent traiter des tâches async et sync => différent types de tâches traitées au même instant sur un même serveur)</li>
+                <li>Workers en mode pull, 1 tâche par process pour minimiser la latence (surtout en synchrone). Le nombre de process par serveur est ajusté en fonction du type de worker (2 process/core en sync/hybrid et 3 en async)</li>
+                <li>circuit breaker DB</li>
+                <li>Dynamic cache</li>
+                <li>pre-cache (avant optimisation)</li>
+                <li>Accès à la DB limité au maximum (améliore la dispo et le temps de réponse) sur les tâches synchrone (explication response time vs optimisation time)</li>
+              </ul>
+            </div>
+          </section>
+
+          <section class="slides-left">
+            <span class="cat-title">Architecture d'une instance de Fasterize</span>
+            <h2>Broker</h2>
+            <div class="border"></div>
+            <div class="content">
+              <ul>
+                <li>1 broker par serveur proxy</li>
+                <li>Les workers en mode pull vont chercher des tâches sur tous les brokers</li>
+                <li>Lorsqu'une tâche est distribuée à un worker, celui-ci envoie un ack et se désabonne des autres brokers</li>
+                <li>Si le worker n'envoie pas de ack, le broker redistribue la tâche à un autre broker (la tâche est prioritaire par rapport aux autres)</li>
+                <li>Au bout de 3 retry, la tâche est annulée</li>
+                <li>Elle est aussi annulée si elle passe attend trop longtemps sur le broker</li>
+              </ul>
+            </div>
+          </section>
+        </section>
+
+        <section>
+          <section class="slides-left">
+            <span class="cat-title">Et après ?</span>
+            <h2>Et après ?</h2>
+            <div class="border"></div>
+            <div class="content">
+              <ul>
+                <li>RDV Hashing</li>
+                <li>Débordement sur du FaaS</li>
+                <li>Redondance du fournisseur DNS</li>
+                <li>Multi-instances</li>
+              </ul>
+            </div>
+          </section>
+
+          <section class="slides-left">
+            <span class="cat-title">Et après ?</span>
+            <h2>RDV Hashing</h2>
+            <div class="border"></div>
+            <div class="content">
+              <ul>
+                <li>1 ressource d'un site peut crasher en cascade tous les workers</li>
+                <li>RDV Hashing : 1 site = 1 sous-ensemble unique de workers => en cas de crash, Chaque site conserve tout ou partie de "ses" workers disponibles</li>
+              </ul>
+            </div>
+          </section>
+
+          <section class="slides-left">
+            <span class="cat-title">Et après ?</span>
+            <h2>En cours : Débordement sur du FaaS</h2>
+            <div class="border"></div>
+            <div class="content">
+              <ul>
+                <li>La capacité des workers est prévue pour absorber le débit max de tâches à optimiser</li>
+                <li>et max(optims/s) >> percentile99(optim/s) => la plupart du temps les workers sont sous-utilisés</li>
+                <li>Pour certaines periodes (Black Friday, soldes, noël, ... pour nos clients e-commerçants), il est difficile, voir impossible de prévoir ce max</li>
+                <li> => nous allons utiliser les services FaaS (AWS Lambda, Google Functions, ...) pour absorber 1% de notre charge et prévoir notre capacité pour le percentile 99</li>
+                <li> => coûts workers divisés par 2,5</li>
+                <li> => FaaS absorbe l'imprévu / le pic éphémère</li>
+              </ul>
+            </div>
+          </section>
+
+
+          <section class="slides-left">
+            <span class="cat-title">Et après ?</span>
+            <h2>Redondance du fournisseur DNS</h2>
+            <div class="border"></div>
+            <div class="content">
+              <ul>
+                <li>actuel SPOF</li>
+              </ul>
+            </div>
+          </section>
+
+          <section class="slides-left">
+            <span class="cat-title">Et après ?</span>
+            <h2>Multi-instances</h2>
+            <div class="border"></div>
+            <div class="content">
+              <ul>
+                <li>actuel SPOF</li>
+              </ul>
+            </div>
+          </section>
+        </section>
+
+        <section class="slides-left">
+          <span class="cat-title">À emporter</span>
+          <h2>À emporter</h2>
+          <div class="border"></div>
+          <div class="content">
+            <ul>
+              <li>TODO</li>
+            </ul>
+          </div>
         </section>
       </div>
     </div>
@@ -69,11 +268,11 @@
       // Full list of configuration options available at:
       // https://github.com/hakimel/reveal.js#configuration
       Reveal.initialize({
-        controls: false,
+        controls: true,
         progress: true,
         history: true,
         center: false,
-        slideNumber:true,
+        slideNumber: false,
 
         transition: 'none', // none/fade/slide/convex/concave/zoom
         margin: 0.1,
